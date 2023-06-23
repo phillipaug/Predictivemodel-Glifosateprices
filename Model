@@ -1,0 +1,46 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+
+# Load your data
+df = pd.read_csv('path_to_your_file.csv')
+
+# Feature engineering
+# As an example, let's extract the month and year from the date, you can add more features
+df['Date'] = pd.to_datetime(df['Date'])
+df['Month'] = df['Date'].dt.month
+df['Year'] = df['Date'].dt.year
+
+# Select your features and target variable
+X = df[['Month', 'Year']]  # replace or add to this list with your actual features
+y = df['Price']  # replace 'Price' with your actual target column
+
+# Split the data into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize the model
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred_train = model.predict(X_train)
+y_pred_test = model.predict(X_test)
+
+# Calculate and print the mean squared error
+mse_train = mean_squared_error(y_train, y_pred_train)
+mse_test = mean_squared_error(y_test, y_pred_test)
+
+print(f'Training MSE: {mse_train}')
+print(f'Test MSE: {mse_test}')
+
+# Plot predicted vs actual values
+plt.scatter(y_test, y_pred_test)
+plt.xlabel('Actual Prices')
+plt.ylabel('Predicted Prices')
+plt.title('Actual vs Predicted Prices')
+plt.show()
